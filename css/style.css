@@ -1,0 +1,54 @@
+.container {
+  width: 1200px;
+  min-height: 140vh;
+  margin: 0 auto;
+  background-color: rgb(180, 107, 171);
+}
+.sections {
+  width: 100%;
+  height: 90vh;
+  background-color: brown;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.unit {
+  min-height: 80%;
+  width: 20%;
+  background-color: rgb(56, 121, 121);
+  border: 1px solid black;
+}
+
+.createTask{
+    width:60%;
+    height:80vh;
+    position:absolute;
+    top:10%;
+    left:20%;
+    margin:0 auto;
+    background-color: rgb(199, 213, 238);
+    border: 2px solid black;
+}
+.progressBar {
+  width: 50%;
+  height: 40vh;
+  background-color: coral;
+  margin-top: 2%;
+}
+
+h1{
+    margin-right:5%;
+}
+textarea{
+    resize:none;
+}
+.m-right{
+    margin-right:1%;
+}
+.m-left{
+    margin-left:5%;
+}
+
+
+
