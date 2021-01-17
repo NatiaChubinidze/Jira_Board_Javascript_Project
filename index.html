@@ -12,6 +12,7 @@
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
+
   <body>
     <div class="container" id="container">
       <h1 class="d-inline-block align-middle">Jira Board Project</h1>
@@ -28,6 +29,16 @@
       <div class="sections mt-2" id="sections">
         <div class="unit backlog" id="backlog">
           <h4>Backlog</h4>
+          <div class="task">
+            <button
+              type="button"
+              class="btn-close close"
+              aria-label="Close"
+            ></button>
+            <h5>Title</h5>
+            <p>Assigned to:</p>
+            <p>Due Date:</p>
+          </div>
         </div>
         <div class="unit toDo" id="toDo">
           <h4>To Do</h4>
@@ -39,23 +50,33 @@
           <h4>Done</h4>
         </div>
       </div>
+
       <div class="createTask d-none" id="createTask">
-          <h3 class="m-left mt-2">Create issue</h3>
-          <div class="col-10 m-left mt-2">
+        <h3 class="m-left mt-2">Create issue</h3>
+        <div class="col-10 m-left mt-2">
           <label for="summery">Summery</label>
-          <input type="text" class="form-control" id="summery" >
-          <label for="description">Description</label><br>
-          <textarea id="description" class="form-control" name="description" rows="5" cols="60"></textarea>
-          </div>
-          <div class="col-4 m-left mt-2">
+          <input type="text" class="form-control" id="summery" />
+          <label for="description">Description</label><br />
+          <textarea
+            id="description"
+            class="form-control"
+            name="description"
+            rows="5"
+            cols="60"
+          ></textarea>
+        </div>
+        <div class="col-4 m-left mt-2">
           <label for="assignedTo">Assigned To</label>
-          <input type="text" class="form-control" id="assignedTo" >
+          <input type="text" class="form-control" id="assignedTo" />
           <label for="dueDate">Due Date</label>
-          <input type="date" class="form-control" id="dueDate">
-          </div>
-          <button class="btn btn-primary mt-3 m-left" id="createTaskBtn">Create</button>
-          <button class="btn btn-light mt-3" id="cancel">Cancel</button>
+          <input type="date" class="form-control" id="dueDate" />
+        </div>
+        <button class="btn btn-primary mt-3 m-left" id="createTaskBtn">
+          Create
+        </button>
+        <button class="btn btn-light mt-3" id="cancel">Cancel</button>
       </div>
+
       <div class="progressBar" id="progressBar">
         <h4>Progress Bar</h4>
       </div>
