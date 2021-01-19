@@ -26,7 +26,7 @@ let taskDescription = "";
 let taskDate = "";
 let taskAssigned = "";
 
-//let cards =Array.from(document.querySelectorAll(".task"));
+
 let clickedTask;
 let tasksList = [];
 
@@ -270,7 +270,13 @@ function compareDates() {
 ///Progress Bar
 function progressBar() {
   const tasksNumber = tasksList.length;
-  
+  if(tasksNumber===0){
+    backlogBar.style.width = "0%";
+    toDoBar.style.width ="0%";
+    inProgressBar.style.width = "0%";
+    doneBar.style.width = "0%";
+  }
+  else {
   const backlogs =
     (tasksList.filter((item) => item.section == "backlog").length /
       tasksNumber) *
@@ -289,7 +295,7 @@ function progressBar() {
   toDoBar.style.width = `${toDos}%`;
   inProgressBar.style.width = `${inProgress}%`;
   doneBar.style.width = `${done}%`;
-  
+  }
 }
 
 
@@ -327,7 +333,7 @@ function saveEditedTask(clickedTask){
 }
 
 
-//cards.forEach((card)=>addEventListener("click",editTask));
+
 
 
 ///////////////////////////////////////////////////////////////////////////

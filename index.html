@@ -29,7 +29,7 @@
 
       <div class="sections mt-2" id="sections">
         <div class="unit">
-          <h4>Backlog</h4>
+          <h4 class="Titles">Backlog</h4>
           <div id="backlog" class="totalTasks">
             <!-- <div class="task" draggable="true">
               <button
@@ -59,7 +59,7 @@
       </div>
 
       <div class="createTask d-none" id="createTask">
-        <h3 class="m-left mt-2">Create issue</h3>
+        <h3 class="m-left mt-4">Create issue</h3>
         <div class="col-10 m-left mt-2">
           <label for="summery">Summery</label>
           <input type="text" class="form-control" id="summery" />
@@ -78,39 +78,41 @@
           <label for="dueDate">Due Date</label>
           <input type="date" class="form-control" id="dueDate" />
         </div>
+        <div class="createCancel">
         <button class="btn btn-primary mt-3 m-left" id="createTaskBtn">
           Create
         </button>
-        <button class="btn btn-light mt-3" id="cancel">Cancel</button>
+        <button class="btn btn-light mt-3 m-left" id="cancel">Cancel</button>
+        </div>
       </div>
 
       <div class="progressBar" id="progressBar">
-        <h4>Progress Bar</h4>
+        
         <div class="gridBar">
 
 
-          <h5>Backlog</h5>
+          <h5 class="mt-2 titles">Backlog</h5>
           <div class="w3-light-grey w3-large w3-round-xlarge col-12 bar">
             <div
               class="w3-purple w3-padding-small w3-center w3-round-xlarge progr" id="backlogBar"
             ></div>
           </div>
 
-          <h5>Todo</h5>
+          <h5 class="mt-2 titles">Todo</h5>
           <div class="w3-light-grey w3-large w3-round-xlarge col-12 bar">
             <div
               class="w3-yellow w3-padding-small w3-center w3-round-xlarge progr" id="toDoBar"
             ></div>
           </div>
 
-          <h5>In Progress</h5>
+          <h5 class="mt-2 titles">In Progress</h5>
           <div class="w3-light-grey w3-large w3-round-xlarge col-12 bar">
             <div
               class="w3-blue w3-padding-small w3-center w3-round-xlarge progr" id="inProgressBar"
             ></div>
           </div>
 
-          <h5>Done</h5>
+          <h5 class="mt-2 titles">Done</h5>
           <div class="w3-light-grey w3-large w3-round-xlarge col-12 bar">
             <div
               class="w3-green w3-padding-small w3-center w3-round-xlarge progr" id="doneBar"
