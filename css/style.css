@@ -44,16 +44,42 @@
   background-color: aquamarine;
   margin-bottom: 2%;
 }
-
+.totalTasks {
+  min-height: 90%;
+}
 .close {
   position: relative;
   top: 5px;
   left: 85%;
 }
+                  
+.progr{
+  height:4vh;
+  
+}
+
+.gridBar{
+height:80%;
+display:grid;
+grid-template-columns:20% 70%;
+grid-auto-rows: 1fr;
+align-items:center;
+}
+
+.bar{
+  height:4vh;
+  
+}
 h1 {
   margin-right: 5%;
 }
-
+a {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  color: black;
+}
 textarea {
   resize: none;
 }
