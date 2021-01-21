@@ -10,7 +10,6 @@ const toDoBar = document.getElementById("toDoBar");
 const inProgressBar = document.getElementById("inProgressBar");
 const doneBar = document.getElementById("doneBar");
 
-
 const units = {
   backlog: document.getElementById("backlog"),
   toDo: document.getElementById("toDo"),
@@ -20,29 +19,25 @@ const units = {
 
 const storageKey = "JIRA_BOARD_APP:STORAGE";
 
-
 let taskTitle = "";
 let taskDescription = "";
 let taskDate = "";
 let taskAssigned = "";
 
-
 let clickedTask;
 let tasksList = [];
-
 
 getStorage();
 if (tasksList != null) {
   tasksList.forEach((element) => renderTasks(element));
 }
 
-let cards = Array.from(document.querySelectorAll(".task"));
-let existingTasks= document.querySelectorAll(".task");
+let cards = getAllCards();
+let existingTasks = document.querySelectorAll(".task");
 let totalTasks = Array.from(document.querySelectorAll(".totalTasks"));
-const deleteButtons=document.querySelectorAll(".close");
+const deleteButtons = getDeleteBtns();
 
 search.addEventListener("change", ({ target }) => {
-  
   const { value } = target;
   clearBoard();
   if (value != "") {
@@ -50,7 +45,10 @@ search.addEventListener("change", ({ target }) => {
       element.title.toLowerCase().includes(value.toLowerCase())
     );
     filteredArray.forEach((element) => renderTasks(element));
-  } else tasksList.forEach((element) => renderTasks(element));
+  } else {
+    tasksList.forEach((element) => renderTasks(element));
+  }
+  reAddEventListeners();
 });
 
 createBtn.addEventListener("click", (event) => {
@@ -61,49 +59,46 @@ createBtn.addEventListener("click", (event) => {
   taskDate.value = "";
 });
 
-
 createTaskBtn.addEventListener("click", (event) => {
   getRenewedTaskInfo();
-  console.log(createTaskBtn.innerText);
-
-  if(createTaskBtn.innerText=="Create"){
-  let task = new GenerateTask(
-    taskTitle.value,
-    taskDescription.value,
-    taskAssigned.value,
-    taskDate.value
-  );
-  tasksList.push(task);
-  updateStorage();
-  renderTasks(task);
-  const newtask=Array.from(document.querySelectorAll(".task")).filter(item=>item.id==task.Id)[0];
-  console.log(newtask);
-  addEditEventlisteners(newtask);
-dragAndDropEventlisteners(newtask);
-addDeleteEventlisteners(newtask);
-  compareDates();
-  progressBar();
-  taskWindow.classList.add("d-none");
-  } else{
-saveEditedTask(clickedTask);
-updateStorage();
-clearBoard();
-tasksList.forEach(task=>renderTasks(task)); 
+  if (createTaskBtn.innerText == "Create") {
+    let task = new GenerateTask(
+      taskTitle.value,
+      taskDescription.value,
+      taskAssigned.value,
+      taskDate.value
+    );
+    tasksList.push(task);
+    updateStorage();
+    renderTasks(task);
+    const newtask = Array.from(document.querySelectorAll(".task")).filter(
+      (item) => item.id == task.Id
+    )[0];
+    addEditEventlisteners(newtask);
+    dragAndDropEventlisteners(newtask);
+    addDeleteEventlisteners(newtask);
+    compareDates();
+    progressBar();
+    taskWindow.classList.add("d-none");
+  } else {
+    saveEditedTask(clickedTask);
+    updateStorage();
+    clearBoard();
+    tasksList.forEach((task) => renderTasks(task));
+    reAddEventListeners();
+    compareDates();
   }
 });
-
-
 
 cancelBtn.addEventListener("click", (event) => {
   taskWindow.classList.add("d-none");
 });
 
-
-for(let i=0; i<existingTasks.length;i++){
+for (let i = 0; i < existingTasks.length; i++) {
   addEditEventlisteners(existingTasks[i]);
 }
 
-for(let i=0; i<deleteButtons.length;i++){
+for (let i = 0; i < deleteButtons.length; i++) {
   addDeleteEventlisteners(deleteButtons[i]);
 }
 
@@ -111,21 +106,17 @@ for(let i=0; i<deleteButtons.length;i++){
 
 cards.forEach(dragAndDropEventlisteners);
 
-
 totalTasks.forEach((task) =>
   task.addEventListener("dragover", (event) => {
     event.preventDefault();
     const draggable = document.querySelector(".dragging");
-    console.log(draggable);
-    console.log(task);
-    console.log(typeof task);
     task.appendChild(draggable);
     tasksList.forEach((item) => {
       if (draggable.id == item.Id) {
         item.section = task.id;
       }
     });
-    updateStorage(); 
+    updateStorage();
     progressBar();
   })
 );
@@ -156,7 +147,7 @@ function renderTasks(task) {
   btn.classList.add("btn-close");
   btn.classList.add("close");
   btn.setAttribute("aria-label", "Close");
-  btn.setAttribute("data-Id",`${task.Id}`);
+  btn.setAttribute("data-Id", `${task.Id}`);
   const h5 = document.createElement("h5");
   h5.textContent = task.title;
 
@@ -176,12 +167,9 @@ function renderTasks(task) {
 }
 
 //////Clearing the board
-function clearBoard(){
-  
+function clearBoard() {
   totalTasks.forEach((item) => (item.innerHTML = null));
-  console.log("clearing");
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ////Task Object creation
@@ -200,41 +188,43 @@ function GenerateTask(
   this.Id = Math.ceil(Math.random() * 100000);
 }
 
-
-function dragAndDropEventlisteners(card){
+function dragAndDropEventlisteners(card) {
   card.addEventListener("dragstart", () => {
-    card.style.cursor = "move";
     card.classList.add("dragging");
   });
   card.addEventListener("dragend", () => {
     card.classList.remove("dragging");
   });
-
 }
 
-function addEditEventlisteners(task){
-  task.addEventListener("click",editTask);
+function addEditEventlisteners(task) {
+  task.addEventListener("click", editTask);
 }
 
-function addDeleteEventlisteners(deleteButton){
-deleteButton.addEventListener("click", (event)=>{
-  event.stopPropagation();
-  console.log(event.currentTarget.dataset.id);
-  const taskToDelete=tasksList.filter(item=>item.Id==event.currentTarget.dataset.id)[0];
-  console.log(taskToDelete);
-  console.log(...tasksList);
-  deleteTasks(tasksList,taskToDelete);
-  console.log(...tasksList);
-  updateStorage();
-  clearBoard();
-  tasksList.forEach(task=>renderTasks(task));
-});
+function addDeleteEventlisteners(deleteButton) {
+  deleteButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const taskToDelete = tasksList.filter(
+      (item) => item.Id == event.currentTarget.dataset.id
+    )[0];
+    deleteTasks(tasksList, taskToDelete);
+    updateStorage();
+    clearBoard();
+    tasksList.forEach((task) => renderTasks(task));
+    reAddEventListeners();
+    progressBar();
+  });
 }
 
-
-
-
-
+function reAddEventListeners() {
+  let cards = getAllCards();
+  cards.forEach(addEditEventlisteners);
+  cards.forEach(dragAndDropEventlisteners);
+  const deleteButtons = getDeleteBtns();
+  for (let i = 0; i < deleteButtons.length; i++) {
+    addDeleteEventlisteners(deleteButtons[i]);
+  }
+}
 ///////////////////////////////////////////////////////////////////////////
 // making the datefield red
 
@@ -247,10 +237,10 @@ function getCurrentDate() {
 
 function compareDates() {
   const date = getCurrentDate();
+  const cards = getAllCards();
   const cardsWithDates = cards.filter((card) => card.querySelector(".dueDate"));
   cardsWithDates.forEach((card) => {
     const dueDate = card.querySelector(".dueDate");
-
     const taskDate = new Date(dueDate.textContent);
     const dateDue =
       taskDate.getFullYear() +
@@ -265,76 +255,66 @@ function compareDates() {
   });
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ///Progress Bar
 function progressBar() {
   const tasksNumber = tasksList.length;
-  if(tasksNumber===0){
+  if (tasksNumber === 0) {
     backlogBar.style.width = "0%";
-    toDoBar.style.width ="0%";
+    toDoBar.style.width = "0%";
     inProgressBar.style.width = "0%";
     doneBar.style.width = "0%";
-  }
-  else {
-  const backlogs =
-    (tasksList.filter((item) => item.section == "backlog").length /
-      tasksNumber) *
-    100;
-  const toDos =
-    (tasksList.filter((item) => item.section == "toDo").length / tasksNumber) *
-    100;
-  const inProgress =
-    (tasksList.filter((item) => item.section == "inProgress").length /
-      tasksNumber) *
-    100;
-  const done =
-    (tasksList.filter((item) => item.section == "done").length / tasksNumber) *
-    100;
-  backlogBar.style.width = `${backlogs}%`;
-  toDoBar.style.width = `${toDos}%`;
-  inProgressBar.style.width = `${inProgress}%`;
-  doneBar.style.width = `${done}%`;
+  } else {
+    const backlogs =
+      (tasksList.filter((item) => item.section == "backlog").length /
+        tasksNumber) *
+      100;
+    const toDos =
+      (tasksList.filter((item) => item.section == "toDo").length /
+        tasksNumber) *
+      100;
+    const inProgress =
+      (tasksList.filter((item) => item.section == "inProgress").length /
+        tasksNumber) *
+      100;
+    const done =
+      (tasksList.filter((item) => item.section == "done").length /
+        tasksNumber) *
+      100;
+    backlogBar.style.width = `${backlogs}%`;
+    toDoBar.style.width = `${toDos}%`;
+    inProgressBar.style.width = `${inProgress}%`;
+    doneBar.style.width = `${done}%`;
   }
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////
 //////////Task Editing
-function editTask(event){
- 
+function editTask(event) {
   taskWindow.classList.remove("d-none");
-  createTaskBtn.textContent="Save";
-  const taskId=event.currentTarget.id;
-  console.log(event.currentTarget);
-  clickedTask=tasksList.filter(item=>item.Id==taskId)[0];
-  console.log(clickedTask);
+  createTaskBtn.textContent = "Save";
+  const taskId = event.currentTarget.id;
+  clickedTask = tasksList.filter((item) => item.Id == taskId)[0];
   getRenewedTaskInfo();
-  taskTitle.value=clickedTask.title;
-  taskDescription.value=clickedTask.description;
-  taskDate.value=clickedTask.dueDate;
-  taskAssigned.value=clickedTask.assignedTo;
-  
+  taskTitle.value = clickedTask.title;
+  taskDescription.value = clickedTask.description;
+  taskDate.value = clickedTask.dueDate;
+  taskAssigned.value = clickedTask.assignedTo;
 }
-function getRenewedTaskInfo(){
+function getRenewedTaskInfo() {
   taskTitle = document.getElementById("summery");
   taskDescription = document.querySelector("#description");
   taskDate = document.querySelector("#dueDate");
   taskAssigned = document.querySelector("#assignedTo");
 }
 
-function saveEditedTask(clickedTask){
-  clickedTask.title=taskTitle.value;
-  clickedTask.description=taskDescription.value;
-  clickedTask.dueDate=taskDate.value;
-  clickedTask.assignedTo=taskAssigned.value;
+function saveEditedTask(clickedTask) {
+  clickedTask.title = taskTitle.value;
+  clickedTask.description = taskDescription.value;
+  clickedTask.dueDate = taskDate.value;
+  clickedTask.assignedTo = taskAssigned.value;
   taskWindow.classList.add("d-none");
 }
-
-
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 //////////Local storage
@@ -350,13 +330,18 @@ function getStorage() {
   } else return null;
 }
 
-
-
 ////////////////////////////////////////////////////////////////////
 ////tasks deletion function
 function deleteTasks(array, elem) {
   var index = array.indexOf(elem);
   if (index > -1) {
-      array.splice(index, 1);
+    array.splice(index, 1);
   }
+}
+
+function getAllCards() {
+  return Array.from(document.querySelectorAll(".task"));
+}
+function getDeleteBtns() {
+  return document.querySelectorAll(".close");
 }
