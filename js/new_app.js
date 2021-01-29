@@ -20,18 +20,24 @@ const units = {
 const storageKey = "JIRA_BOARD_APP:STORAGE";
 
 taskTitle = document.getElementById("summery");
-  taskDescription = document.querySelector("#description");
-  taskDate = document.querySelector("#dueDate");
-  taskAssigned = document.querySelector("#assignedTo");
+taskDescription = document.querySelector("#description");
+taskDate = document.querySelector("#dueDate");
+taskAssigned = document.querySelector("#assignedTo");
 
 let clickedTask;
 let tasksList = [];
 let totalTasks = Array.from(document.querySelectorAll(".totalTasks"));
 
-//////////////////////////////////////////////////////////////////////////
-////Task Object creation
+
 class Task {
-  constructor(title, description, assignedTo, dueDate, section = "backlog",Id=Math.ceil(Math.random() * 100000)) {
+  constructor(
+    title,
+    description,
+    assignedTo,
+    dueDate,
+    section = "backlog",
+    Id = Math.ceil(Math.random() * 100000)
+  ) {
     this.title = title;
     this.description = description;
     this.assignedTo = assignedTo;
@@ -40,90 +46,93 @@ class Task {
     this.Id = Id;
   }
   deleteTask() {
-    let taskToDelete="";
-    tasksList.forEach(element=>{
-      if(element.Id==this.Id)
-      taskToDelete=element;
-    })
+    let taskToDelete = "";
+    tasksList.forEach((element) => {
+      if (element.Id == this.Id) taskToDelete = element;
+    });
     let index = tasksList.indexOf(taskToDelete);
     if (index > -1) {
       tasksList.splice(index, 1);
     }
   }
-  getCurrentDate () {
+  getCurrentDate() {
     const today = new Date();
     const date =
-      today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
     return date;
   }
 }
 
-class Card extends Task{
-  constructor(title, description, assignedTo, dueDate, section,Id){
-    super(title, description, assignedTo, dueDate, section,Id);
-    this.deleteButton=null;
-    this.taskCard=null;
+class Card extends Task {
+  constructor(title, description, assignedTo, dueDate, section, Id) {
+    super(title, description, assignedTo, dueDate, section, Id);
+    this.deleteButton = null;
+    this.taskCard = null;
 
-    this.div=null;
-    this.btn=null;
-    this.h5=null;
-    this.p_assigned=null;
-    this.p_dueDate=null;
-    this.deadlineRed=false;
-  } 
-  
-  renderTask(){
+    this.div = null;
+    this.btn = null;
+    this.h5 = null;
+    this.p_assigned = null;
+    this.p_dueDate = null;
+    this.deadlineRed = false;
+  }
+
+  renderTask() {
     //creating element
-      this.div = document.createElement("div");
-      this.div.classList.add("task");
-      this.div.setAttribute("id", `${this.Id}`);
-      this.div.setAttribute("draggable", "true");
-  
-      this.btn = document.createElement("button");
-      this.btn.classList.add("btn-close");
-      this.btn.classList.add("close");
-      this.btn.setAttribute("aria-label", "Close");
-      this.btn.setAttribute("data-Id", `${this.Id}`);
-      this.h5 = document.createElement("h5");
-      this.h5.textContent = this.title;
-  
-      this.p_assigned = document.createElement("p");
-      this.p_assigned.textContent = this.assignedTo;
-  
-      this.p_dueDate = document.createElement("p");
-      this.p_dueDate.classList.add("dueDate");
-      this.p_dueDate.textContent = this.dueDate;
-  
-      //making dueDate red
-      const dateDue = new Date(this.dueDate);
-      const dueDate =
-        dateDue.getFullYear() +
-        "-" +
-        (dateDue.getMonth() + 1) +
-        "-" +
-        dateDue.getDate();
-  
-      if (this.getCurrentDate() > dueDate) {
-        this.deadlineRed=true;
-        this.p_dueDate.style.color = "red";
-      }
-  //////adding to the board
+    this.div = document.createElement("div");
+    this.div.classList.add("task");
+    this.div.setAttribute("id", `${this.Id}`);
+    this.div.setAttribute("draggable", "true");
 
-      this.div.appendChild(this.btn);
-      this.div.appendChild(this.h5);
-      this.div.appendChild(this.p_assigned);
-      this.div.appendChild(this.p_dueDate);
-  
-      units[this.section].appendChild(this.div);
+    this.btn = document.createElement("button");
+    this.btn.classList.add("btn-close");
+    this.btn.classList.add("close");
+    this.btn.setAttribute("aria-label", "Close");
+    this.btn.setAttribute("data-Id", `${this.Id}`);
+    this.h5 = document.createElement("h5");
+    this.h5.textContent = this.title;
 
-   /////adding Eventlisteners
-   this.taskCard=document.getElementById(this.Id);
-   this.deleteButton=this.taskCard.getElementsByClassName("close")[0];
+    this.p_assigned = document.createElement("p");
+    this.p_assigned.textContent = this.assignedTo;
 
-   this.taskCard.addEventListener("dragstart", () => {
-    this.taskCard.classList.add("dragging");
-  });
-   
+    this.p_dueDate = document.createElement("p");
+    this.p_dueDate.classList.add("dueDate");
+    this.p_dueDate.textContent = this.dueDate;
+
+    //making dueDate red
+    const dateDue = new Date(this.dueDate);
+    const dueDate =
+      dateDue.getFullYear() +
+      "-" +
+      (dateDue.getMonth() + 1) +
+      "-" +
+      dateDue.getDate();
+
+    if (this.getCurrentDate() > dueDate) {
+      this.deadlineRed = true;
+      this.p_dueDate.style.color = "red";
+    }
+    //////adding to the board
+
+    this.div.appendChild(this.btn);
+    this.div.appendChild(this.h5);
+    this.div.appendChild(this.p_assigned);
+    this.div.appendChild(this.p_dueDate);
+
+    units[this.section].appendChild(this.div);
+
+    /////adding Eventlisteners
+    this.taskCard = document.getElementById(this.Id);
+    this.deleteButton = this.taskCard.getElementsByClassName("close")[0];
+
+    this.taskCard.addEventListener("dragstart", () => {
+      this.taskCard.classList.add("dragging");
+    });
+
     this.taskCard.addEventListener("dragend", () => {
       this.taskCard.classList.remove("dragging");
     });
@@ -131,46 +140,51 @@ class Card extends Task{
     this.taskCard.addEventListener("click", (event) => {
       taskWindow.classList.remove("d-none");
       createTaskBtn.textContent = "Save";
-      
-      //getRenewedTaskInfo();
-      
+
       taskTitle.value = this.title;
       taskDescription.value = this.description;
       taskDate.value = this.dueDate;
       taskAssigned.value = this.assignedTo;
 
       //clickedTask
-      clickedTask=this;
-     
+      clickedTask = this;
     });
 
     this.deleteButton.addEventListener("click", (event) => {
       event.stopPropagation();
       this.deleteTask();
       updateStorage();
-  totalTasks.forEach(element=>element.innerHTML=null);
-      tasksList.forEach(element=>{
-        const card=new Card(element.title, element.description, element.assignedTo,element.dueDate, element.section,element.Id);
+      totalTasks.forEach((element) => (element.innerHTML = null));
+      tasksList.forEach((element) => {
+        const card = new Card(
+          element.title,
+          element.description,
+          element.assignedTo,
+          element.dueDate,
+          element.section,
+          element.Id
+        );
         card.renderTask();
-      
-      })
+      });
       progressBar();
     });
   }
-  
 }
-
-
 
 getStorage();
 if (tasksList != null) {
-  tasksList.forEach(element=>{
-    const card = new Card(element.title, element.description,element.assignedTo,element.dueDate,element.section,element.Id);
+  tasksList.forEach((element) => {
+    const card = new Card(
+      element.title,
+      element.description,
+      element.assignedTo,
+      element.dueDate,
+      element.section,
+      element.Id
+    );
     card.renderTask();
-    
   });
 }
-
 
 search.addEventListener("change", ({ target }) => {
   const { value } = target;
@@ -178,16 +192,30 @@ search.addEventListener("change", ({ target }) => {
     let filteredArray = tasksList.filter((element) =>
       element.title.toLowerCase().includes(value.toLowerCase())
     );
-    totalTasks.forEach(element=>element.innerHTML=null);
-    filteredArray.forEach(element=>{
-      const card = new Card(element.title, element.description,element.assignedTo,element.dueDate,element.section,element.Id);
-    card.renderTask();
+    totalTasks.forEach((element) => (element.innerHTML = null));
+    filteredArray.forEach((element) => {
+      const card = new Card(
+        element.title,
+        element.description,
+        element.assignedTo,
+        element.dueDate,
+        element.section,
+        element.Id
+      );
+      card.renderTask();
     });
   } else {
-    totalTasks.forEach(element=>element.innerHTML=null);
-    tasksList.forEach(element=>{
-      const card = new Card(element.title, element.description,element.assignedTo,element.dueDate,element.section,element.Id);
-    card.renderTask();
+    totalTasks.forEach((element) => (element.innerHTML = null));
+    tasksList.forEach((element) => {
+      const card = new Card(
+        element.title,
+        element.description,
+        element.assignedTo,
+        element.dueDate,
+        element.section,
+        element.Id
+      );
+      card.renderTask();
     });
   }
 });
@@ -209,12 +237,14 @@ createTaskBtn.addEventListener("click", (event) => {
       taskDate.value
     );
     tasksList.push(task);
-    let card=new Card(taskTitle.value,
+    let card = new Card(
+      taskTitle.value,
       taskDescription.value,
       taskAssigned.value,
       taskDate.value,
       task.section,
-      task.Id);
+      task.Id
+    );
     updateStorage();
     card.renderTask();
     progressBar();
@@ -222,9 +252,16 @@ createTaskBtn.addEventListener("click", (event) => {
   } else {
     saveEditedTask();
     updateStorage();
-    totalTasks.forEach(element=>element.innerHTML=null);
-    tasksList.forEach(element=>{
-      const card = new Card(element.title, element.description,element.assignedTo,element.dueDate,element.section,element.Id);
+    totalTasks.forEach((element) => (element.innerHTML = null));
+    tasksList.forEach((element) => {
+      const card = new Card(
+        element.title,
+        element.description,
+        element.assignedTo,
+        element.dueDate,
+        element.section,
+        element.Id
+      );
       card.renderTask();
     });
   }
@@ -236,21 +273,15 @@ cancelBtn.addEventListener("click", (event) => {
 
 
 
-////////////////// drag & drop functionality
-
-
 totalTasks.forEach((task) =>
   task.addEventListener("dragover", (event) => {
     event.preventDefault();
     const draggable = document.querySelector(".dragging");
-    console.log(draggable);
     task.appendChild(draggable);
-    
+
     tasksList.forEach((item) => {
       if (draggable.id == item.Id) {
-        console.log(item.section);
         item.section = task.id;
-        console.log(item.section);
       }
     });
     updateStorage();
@@ -294,10 +325,9 @@ function progressBar() {
 }
 
 function saveEditedTask() {
-  tasksList.forEach(element=>{
-    if(element.Id==clickedTask.Id)
-    clickedTask=element;
-  })
+  tasksList.forEach((element) => {
+    if (element.Id == clickedTask.Id) clickedTask = element;
+  });
   clickedTask.title = taskTitle.value;
   clickedTask.description = taskDescription.value;
   clickedTask.dueDate = taskDate.value;
