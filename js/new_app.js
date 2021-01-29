@@ -28,7 +28,6 @@ let clickedTask;
 let tasksList = [];
 let totalTasks = Array.from(document.querySelectorAll(".totalTasks"));
 
-
 class Task {
   constructor(
     title,
@@ -154,18 +153,8 @@ class Card extends Task {
       event.stopPropagation();
       this.deleteTask();
       updateStorage();
-      totalTasks.forEach((element) => (element.innerHTML = null));
-      tasksList.forEach((element) => {
-        const card = new Card(
-          element.title,
-          element.description,
-          element.assignedTo,
-          element.dueDate,
-          element.section,
-          element.Id
-        );
-        card.renderTask();
-      });
+      clearBoard();
+      render(tasksList);
       progressBar();
     });
   }
@@ -192,31 +181,11 @@ search.addEventListener("change", ({ target }) => {
     let filteredArray = tasksList.filter((element) =>
       element.title.toLowerCase().includes(value.toLowerCase())
     );
-    totalTasks.forEach((element) => (element.innerHTML = null));
-    filteredArray.forEach((element) => {
-      const card = new Card(
-        element.title,
-        element.description,
-        element.assignedTo,
-        element.dueDate,
-        element.section,
-        element.Id
-      );
-      card.renderTask();
-    });
+    clearBoard();
+    render(filteredArray);
   } else {
-    totalTasks.forEach((element) => (element.innerHTML = null));
-    tasksList.forEach((element) => {
-      const card = new Card(
-        element.title,
-        element.description,
-        element.assignedTo,
-        element.dueDate,
-        element.section,
-        element.Id
-      );
-      card.renderTask();
-    });
+    clearBoard();
+    render(tasksList);
   }
 });
 
@@ -252,26 +221,14 @@ createTaskBtn.addEventListener("click", (event) => {
   } else {
     saveEditedTask();
     updateStorage();
-    totalTasks.forEach((element) => (element.innerHTML = null));
-    tasksList.forEach((element) => {
-      const card = new Card(
-        element.title,
-        element.description,
-        element.assignedTo,
-        element.dueDate,
-        element.section,
-        element.Id
-      );
-      card.renderTask();
-    });
+    clearBoard();
+    render(tasksList);
   }
 });
 
 cancelBtn.addEventListener("click", (event) => {
   taskWindow.classList.add("d-none");
 });
-
-
 
 totalTasks.forEach((task) =>
   task.addEventListener("dragover", (event) => {
@@ -291,8 +248,6 @@ totalTasks.forEach((task) =>
 
 progressBar();
 
-//////////////////////////////////////////////////////////////////////////
-///Progress Bar
 function progressBar() {
   const tasksNumber = tasksList.length;
   if (tasksNumber === 0) {
@@ -335,8 +290,24 @@ function saveEditedTask() {
   taskWindow.classList.add("d-none");
 }
 
-///////////////////////////////////////////////////////////////////////////
-//////////Local storage
+function clearBoard() {
+  totalTasks.forEach((element) => (element.innerHTML = null));
+}
+
+function render(array) {
+  array.forEach((element) => {
+    const card = new Card(
+      element.title,
+      element.description,
+      element.assignedTo,
+      element.dueDate,
+      element.section,
+      element.Id
+    );
+    card.renderTask();
+  });
+}
+
 function updateStorage() {
   localStorage.setItem(storageKey, JSON.stringify(tasksList));
 }
