@@ -219,7 +219,15 @@ createTaskBtn.addEventListener("click", (event) => {
     progressBar();
     taskWindow.classList.add("d-none");
   } else {
-    saveEditedTask();
+    //save the edited task
+    tasksList.forEach((element) => {
+      if (element.Id == clickedTask.Id) clickedTask = element;
+    });
+    clickedTask.title = taskTitle.value;
+    clickedTask.description = taskDescription.value;
+    clickedTask.dueDate = taskDate.value;
+    clickedTask.assignedTo = taskAssigned.value;
+    taskWindow.classList.add("d-none");
     updateStorage();
     clearBoard();
     render(tasksList);
@@ -279,16 +287,7 @@ function progressBar() {
   }
 }
 
-function saveEditedTask() {
-  tasksList.forEach((element) => {
-    if (element.Id == clickedTask.Id) clickedTask = element;
-  });
-  clickedTask.title = taskTitle.value;
-  clickedTask.description = taskDescription.value;
-  clickedTask.dueDate = taskDate.value;
-  clickedTask.assignedTo = taskAssigned.value;
-  taskWindow.classList.add("d-none");
-}
+
 
 function clearBoard() {
   totalTasks.forEach((element) => (element.innerHTML = null));
