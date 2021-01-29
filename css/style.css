@@ -24,12 +24,11 @@ body {
 }
 
 .createTask {
-  width: 60%;
+  width: 50%;
   height: 80vh;
   position: absolute;
   top: 10%;
-  left: 20%;
-  margin: 0 auto;
+  left: 25%;
   background-color: #e5e9ee;
   border: 1px solid rgb(73, 73, 73);
 }
@@ -91,9 +90,7 @@ body {
 .bar {
   height: 4vh;
 }
-h1 {
-  margin-right: 5%;
-}
+
 
 a {
   text-decoration: none;
@@ -111,9 +108,4 @@ a:hover {
 textarea {
   resize: none;
 }
-.m-right {
-  margin-right: 1%;
-}
-.m-left {
-  margin-left: 5%;
-}
+
