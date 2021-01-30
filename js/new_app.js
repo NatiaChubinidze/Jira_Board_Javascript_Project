@@ -97,10 +97,12 @@ class Card extends Task {
 
     this.p_assigned = document.createElement("p");
     this.p_assigned.textContent = this.assignedTo;
+    this.p_assigned.setAttribute("data-Id", `${this.Id}`);
 
     this.p_dueDate = document.createElement("p");
     this.p_dueDate.classList.add("dueDate");
     this.p_dueDate.textContent = this.dueDate;
+    this.p_dueDate.setAttribute("data-Id", `${this.Id}`);
 
     //making dueDate red
     const dateDue = new Date(this.dueDate);
@@ -123,40 +125,6 @@ class Card extends Task {
     this.div.appendChild(this.p_dueDate);
 
     units[this.section].appendChild(this.div);
-
-    /////adding Eventlisteners
-    this.taskCard = document.getElementById(this.Id);
-    this.deleteButton = this.taskCard.getElementsByClassName("close")[0];
-
-    this.taskCard.addEventListener("dragstart", () => {
-      this.taskCard.classList.add("dragging");
-    });
-
-    this.taskCard.addEventListener("dragend", () => {
-      this.taskCard.classList.remove("dragging");
-    });
-
-    this.taskCard.addEventListener("click", (event) => {
-      taskWindow.classList.remove("d-none");
-      createTaskBtn.textContent = "Save";
-
-      taskTitle.value = this.title;
-      taskDescription.value = this.description;
-      taskDate.value = this.dueDate;
-      taskAssigned.value = this.assignedTo;
-
-      //clickedTask
-      clickedTask = this;
-    });
-
-    this.deleteButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      this.deleteTask();
-      updateStorage();
-      clearBoard();
-      render(tasksList);
-      progressBar();
-    });
   }
 }
 
@@ -175,6 +143,8 @@ if (tasksList != null) {
   });
 }
 
+
+/////Eventlisteners
 search.addEventListener("change", ({ target }) => {
   const { value } = target;
   if (value != "") {
@@ -220,9 +190,6 @@ createTaskBtn.addEventListener("click", (event) => {
     taskWindow.classList.add("d-none");
   } else {
     //save the edited task
-    tasksList.forEach((element) => {
-      if (element.Id == clickedTask.Id) clickedTask = element;
-    });
     clickedTask.title = taskTitle.value;
     clickedTask.description = taskDescription.value;
     clickedTask.dueDate = taskDate.value;
@@ -254,8 +221,66 @@ totalTasks.forEach((task) =>
   })
 );
 
+
+////Adding Eventlisteners on the parent element (sections) instead of tasks themselves
+sections.addEventListener("dragstart", (event) => {
+  let clickedTask = null;
+  let id = null;
+  if (event.target.dataset.id) {
+    id = event.target.dataset.id;
+    clickedtask = document.getElementById(id);
+  } else {
+    clickedTask = event.target;
+  }
+  clickedTask.classList.add("dragging");
+});
+
+sections.addEventListener("dragend", () => {
+  const draggingCard = document.getElementsByClassName("dragging")[0];
+  draggingCard.classList.remove("dragging");
+});
+
+sections.addEventListener("click", (event) => {
+  if (event.target.tagName.toLowerCase() == "button") {
+    event.stopPropagation();
+    const id = event.target.dataset.id;
+    tasksList.forEach((element) => {
+      if (element.Id == id) element.deleteTask();
+    });
+    updateStorage();
+    clearBoard();
+    render(tasksList);
+    progressBar();
+  } else {
+    let task = null;
+    if (event.target.dataset.id) {
+      tasksList.forEach((element) => {
+        if (element.Id == event.target.dataset.id) task = element;
+      });
+    } else if (event.target.id) {
+      tasksList.forEach((element) => {
+        if (element.Id == event.target.id) task = element;
+      });
+    }
+    if (!task) return;
+    taskWindow.classList.remove("d-none");
+    createTaskBtn.textContent = "Save";
+
+    taskTitle.value = task.title;
+    taskDescription.value = task.description;
+    taskDate.value = task.dueDate;
+    taskAssigned.value = task.assignedTo;
+
+    clickedTask = task;
+  }
+});
+
 progressBar();
 
+
+
+
+///// functions used in the project
 function progressBar() {
   const tasksNumber = tasksList.length;
   if (tasksNumber === 0) {
@@ -287,8 +312,6 @@ function progressBar() {
   }
 }
 
-
-
 function clearBoard() {
   totalTasks.forEach((element) => (element.innerHTML = null));
 }
@@ -314,7 +337,17 @@ function updateStorage() {
 function getStorage() {
   const list = JSON.parse(localStorage.getItem(storageKey));
   if (list != null) {
-    tasksList = list;
+    list.forEach((item) => {
+      const taskObject = new Task(
+        item.title,
+        item.description,
+        item.assignedTo,
+        item.dueDate,
+        item.section,
+        item.Id
+      );
+      tasksList.push(taskObject);
+    });
     return tasksList;
   } else return null;
 }
