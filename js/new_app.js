@@ -92,8 +92,10 @@ class Card extends Task {
     this.btn.classList.add("close");
     this.btn.setAttribute("aria-label", "Close");
     this.btn.setAttribute("data-Id", `${this.Id}`);
+
     this.h5 = document.createElement("h5");
     this.h5.textContent = this.title;
+    this.h5.setAttribute("data-Id", `${this.Id}`);
 
     this.p_assigned = document.createElement("p");
     this.p_assigned.textContent = this.assignedTo;
