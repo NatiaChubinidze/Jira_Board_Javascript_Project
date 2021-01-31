@@ -141,7 +141,6 @@ if (tasksList != null) {
   });
 }
 
-
 /////Eventlisteners
 search.addEventListener("change", ({ target }) => {
   const { value } = target;
@@ -203,7 +202,6 @@ cancelBtn.addEventListener("click", (event) => {
   taskWindow.classList.add("d-none");
 });
 
-
 ////Adding Eventlisteners on the parent element (sections) instead of tasks themselves
 sections.addEventListener("dragstart", (event) => {
   let clickedTask = null;
@@ -224,22 +222,20 @@ sections.addEventListener("dragend", () => {
 
 sections.addEventListener("dragover", (event) => {
   console.log(event.target);
-  if(event.target.classList.contains("totalTasks")){
-  event.preventDefault();
-  const draggable = document.querySelector(".dragging");
-  event.target.appendChild(draggable);
+  if (event.target.classList.contains("totalTasks")) {
+    event.preventDefault();
+    const draggable = document.querySelector(".dragging");
+    event.target.appendChild(draggable);
 
-  tasksList.forEach((item) => {
-    if (draggable.id == item.Id) {
-      item.section = event.target.id;
-    }
-  });
-  updateStorage();
-  progressBar();
-}
+    tasksList.forEach((item) => {
+      if (draggable.id == item.Id) {
+        item.section = event.target.id;
+      }
+    });
+    updateStorage();
+    progressBar();
+  }
 });
-
-
 
 sections.addEventListener("click", (event) => {
   if (event.target.tagName.toLowerCase() == "button") {
@@ -278,11 +274,13 @@ sections.addEventListener("click", (event) => {
 
 progressBar();
 
-
-
-
 ///// functions used in the project
 function progressBar() {
+  backlogBar.textContent = null;
+  toDoBar.textContent = null;
+  inProgressBar.textContent = null;
+  doneBar.textContent = null;
+
   const tasksNumber = tasksList.length;
   if (tasksNumber === 0) {
     backlogBar.style.width = "0%";
@@ -307,22 +305,17 @@ function progressBar() {
         tasksNumber) *
       100;
 
-      backlogBar.textContent=null;
-      toDoBar.textContent=null;
-      inProgressBar.textContent=null;
-      doneBar.textContent=null;
-      
     backlogBar.style.width = `${backlogs}%`;
-    if(backlogs!==0) backlogBar.textContent=`${backlogs}%`;
+    if (backlogs !== 0) backlogBar.textContent = `${backlogs}%`;
 
     toDoBar.style.width = `${toDos}%`;
-    if(toDos!==0) toDoBar.textContent=`${toDos}%`;
+    if (toDos !== 0) toDoBar.textContent = `${toDos}%`;
 
     inProgressBar.style.width = `${inProgress}%`;
-    if(inProgress!==0) inProgressBar.textContent=`${inProgress}%`;
+    if (inProgress !== 0) inProgressBar.textContent = `${inProgress}%`;
 
     doneBar.style.width = `${done}%`;
-    if(done!==0) doneBar.textContent=`${done}%`;
+    if (done !== 0) doneBar.textContent = `${done}%`;
   }
 }
 
