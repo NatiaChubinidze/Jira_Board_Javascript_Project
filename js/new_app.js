@@ -45,11 +45,7 @@ class Task {
     this.Id = Id;
   }
   deleteTask() {
-    let taskToDelete = "";
-    tasksList.forEach((element) => {
-      if (element.Id == this.Id) taskToDelete = element;
-    });
-    let index = tasksList.indexOf(taskToDelete);
+    let index = tasksList.indexOf(this);
     if (index > -1) {
       tasksList.splice(index, 1);
     }
@@ -207,22 +203,6 @@ cancelBtn.addEventListener("click", (event) => {
   taskWindow.classList.add("d-none");
 });
 
-totalTasks.forEach((task) =>
-  task.addEventListener("dragover", (event) => {
-    event.preventDefault();
-    const draggable = document.querySelector(".dragging");
-    task.appendChild(draggable);
-
-    tasksList.forEach((item) => {
-      if (draggable.id == item.Id) {
-        item.section = task.id;
-      }
-    });
-    updateStorage();
-    progressBar();
-  })
-);
-
 
 ////Adding Eventlisteners on the parent element (sections) instead of tasks themselves
 sections.addEventListener("dragstart", (event) => {
@@ -241,6 +221,25 @@ sections.addEventListener("dragend", () => {
   const draggingCard = document.getElementsByClassName("dragging")[0];
   draggingCard.classList.remove("dragging");
 });
+
+sections.addEventListener("dragover", (event) => {
+  console.log(event.target);
+  if(event.target.classList.contains("totalTasks")){
+  event.preventDefault();
+  const draggable = document.querySelector(".dragging");
+  event.target.appendChild(draggable);
+
+  tasksList.forEach((item) => {
+    if (draggable.id == item.Id) {
+      item.section = event.target.id;
+    }
+  });
+  updateStorage();
+  progressBar();
+}
+});
+
+
 
 sections.addEventListener("click", (event) => {
   if (event.target.tagName.toLowerCase() == "button") {
@@ -307,10 +306,23 @@ function progressBar() {
       (tasksList.filter((item) => item.section == "done").length /
         tasksNumber) *
       100;
+
+      backlogBar.textContent=null;
+      toDoBar.textContent=null;
+      inProgressBar.textContent=null;
+      doneBar.textContent=null;
+      
     backlogBar.style.width = `${backlogs}%`;
+    if(backlogs!==0) backlogBar.textContent=`${backlogs}%`;
+
     toDoBar.style.width = `${toDos}%`;
+    if(toDos!==0) toDoBar.textContent=`${toDos}%`;
+
     inProgressBar.style.width = `${inProgress}%`;
+    if(inProgress!==0) inProgressBar.textContent=`${inProgress}%`;
+
     doneBar.style.width = `${done}%`;
+    if(done!==0) doneBar.textContent=`${done}%`;
   }
 }
 
