@@ -29,14 +29,14 @@ let tasksList = [];
 let totalTasks = Array.from(document.querySelectorAll(".totalTasks"));
 
 class Task {
-  constructor(
+  constructor({
     title,
     description,
     assignedTo,
     dueDate,
     section = "backlog",
-    Id = Math.ceil(Math.random() * 100000)
-  ) {
+    Id = Math.ceil(Math.random() * 100000),
+  }) {
     this.title = title;
     this.description = description;
     this.assignedTo = assignedTo;
@@ -63,8 +63,8 @@ class Task {
 }
 
 class Card extends Task {
-  constructor(title, description, assignedTo, dueDate, section, Id) {
-    super(title, description, assignedTo, dueDate, section, Id);
+  constructor({ title, description, assignedTo, dueDate, section, Id }) {
+    super({ title, description, assignedTo, dueDate, section, Id });
     this.deleteButton = null;
     this.taskCard = null;
 
@@ -129,14 +129,7 @@ class Card extends Task {
 getStorage();
 if (tasksList != null) {
   tasksList.forEach((element) => {
-    const card = new Card(
-      element.title,
-      element.description,
-      element.assignedTo,
-      element.dueDate,
-      element.section,
-      element.Id
-    );
+    const card = new Card(element);
     card.renderTask();
   });
 }
@@ -165,32 +158,28 @@ createBtn.addEventListener("click", (event) => {
 });
 
 createTaskBtn.addEventListener("click", (event) => {
+  const taskOptions = {
+    title: taskTitle.value,
+    description: taskDescription.value,
+    assignedTo: taskAssigned.value,
+    dueDate: taskDate.value,
+  };
   if (createTaskBtn.innerText == "Create") {
-    let task = new Task(
-      taskTitle.value,
-      taskDescription.value,
-      taskAssigned.value,
-      taskDate.value
-    );
+    let task = new Task(taskOptions);
+    console.log(task);
     tasksList.push(task);
-    let card = new Card(
-      taskTitle.value,
-      taskDescription.value,
-      taskAssigned.value,
-      taskDate.value,
-      task.section,
-      task.Id
-    );
+    let card = new Card(task);
+    console.log(card);
     updateStorage();
     card.renderTask();
     progressBar();
     taskWindow.classList.add("d-none");
   } else {
     //save the edited task
-    clickedTask.title = taskTitle.value;
-    clickedTask.description = taskDescription.value;
-    clickedTask.dueDate = taskDate.value;
-    clickedTask.assignedTo = taskAssigned.value;
+    clickedTask.title = taskOptions.title;
+    clickedTask.description = taskOptions.description;
+    clickedTask.dueDate = taskOptions.dueDate;
+    clickedTask.assignedTo = taskOptions.assignedTo;
     taskWindow.classList.add("d-none");
     updateStorage();
     clearBoard();
@@ -202,7 +191,7 @@ cancelBtn.addEventListener("click", (event) => {
   taskWindow.classList.add("d-none");
 });
 
-////Adding Eventlisteners on the parent element (sections) instead of tasks themselves
+////Adding Eventlisteners on the parent element (sections) instead of tasks
 sections.addEventListener("dragstart", (event) => {
   let clickedTask = null;
   let id = null;
@@ -274,7 +263,7 @@ sections.addEventListener("click", (event) => {
 
 progressBar();
 
-///// functions used in the project
+///// functions
 function progressBar() {
   backlogBar.textContent = null;
   toDoBar.textContent = null;
@@ -306,16 +295,17 @@ function progressBar() {
       100;
 
     backlogBar.style.width = `${backlogs}%`;
-    if (backlogs !== 0) backlogBar.textContent = `${backlogs}%`;
+    if (backlogs !== 0) backlogBar.textContent = `${Math.round(backlogs)}%`;
 
     toDoBar.style.width = `${toDos}%`;
-    if (toDos !== 0) toDoBar.textContent = `${toDos}%`;
+    if (toDos !== 0) toDoBar.textContent = `${Math.round(toDos)}%`;
 
     inProgressBar.style.width = `${inProgress}%`;
-    if (inProgress !== 0) inProgressBar.textContent = `${inProgress}%`;
+    if (inProgress !== 0)
+      inProgressBar.textContent = `${Math.round(inProgress)}%`;
 
     doneBar.style.width = `${done}%`;
-    if (done !== 0) doneBar.textContent = `${done}%`;
+    if (done !== 0) doneBar.textContent = `${Math.round(done.toFixed)}%`;
   }
 }
 
@@ -325,14 +315,7 @@ function clearBoard() {
 
 function render(array) {
   array.forEach((element) => {
-    const card = new Card(
-      element.title,
-      element.description,
-      element.assignedTo,
-      element.dueDate,
-      element.section,
-      element.Id
-    );
+    const card = new Card(element);
     card.renderTask();
   });
 }
@@ -345,14 +328,7 @@ function getStorage() {
   const list = JSON.parse(localStorage.getItem(storageKey));
   if (list != null) {
     list.forEach((item) => {
-      const taskObject = new Task(
-        item.title,
-        item.description,
-        item.assignedTo,
-        item.dueDate,
-        item.section,
-        item.Id
-      );
+      const taskObject = new Task(item);
       tasksList.push(taskObject);
     });
     return tasksList;
